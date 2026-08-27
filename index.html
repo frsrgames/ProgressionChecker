@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abertay Undergraduate Student Progression Navigator</title>
+<style>
+:root {
+  --navy:#0d2d62;
+  --ink:#16233b;
+  --muted:#5d6980;
+  --bg:#eef4fb;
+  --card:#ffffff;
+  --line:#c7d5ea;
+  --button:#f6f9fe;
+  --green:#267a46;
+  --amber:#a66a00;
+  --red:#b12e2e;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+header {
+  background:var(--navy);
+  color:white;
+  padding:18px 24px;
+}
+header .inner, main, footer {
+  width:min(820px, calc(100% - 32px));
+  margin:0 auto;
+}
+header h1 {
+  margin:0;
+  font-size:1.15rem;
+  letter-spacing:.01em;
+}
+main { padding:30px 0 16px; }
+.card {
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:28px;
+  box-shadow:0 10px 32px rgba(20,45,85,.08);
+}
+.eyebrow {
+  color:var(--muted);
+  font-size:.82rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:8px;
+}
+h2 {
+  color:var(--navy);
+  margin:0 0 18px;
+  font-size:1.65rem;
+}
+p, li { line-height:1.55; }
+ul { padding-left:1.3rem; }
+.choice {
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:10px 0;
+  padding:14px 16px;
+  border:1px solid #9eb7dd;
+  border-radius:10px;
+  background:var(--button);
+  color:var(--navy);
+  font:inherit;
+  font-weight:650;
+  cursor:pointer;
+}
+.choice:hover { background:#eaf2ff; }
+.outcome {
+  margin:20px 0 4px;
+  padding:13px 15px;
+  border-radius:10px;
+  font-weight:750;
+}
+.outcome.proceed { background:#e9f6ed; color:var(--green); }
+.outcome.repeat { background:#fff4d9; color:var(--amber); }
+.outcome.withdraw { background:#fdeaea; color:var(--red); }
+.toolbar {
+  display:flex;
+  gap:8px;
+  margin-top:22px;
+}
+.tool {
+  border:1px solid var(--line);
+  background:white;
+  border-radius:9px;
+  padding:9px 12px;
+  cursor:pointer;
+}
+.reminder {
+  margin-top:18px;
+  padding:13px 15px;
+  background:#fff8df;
+  border-left:4px solid #d1a11c;
+  border-radius:6px;
+  font-size:.9rem;
+}
+footer {
+  padding:0 0 34px;
+  color:var(--muted);
+  font-size:.82rem;
+  line-height:1.45;
+}
+@media (max-width:600px) {
+  .card { padding:20px; }
+  h2 { font-size:1.4rem; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <h1>Undergraduate Student Progression Navigator · Stages 1–4</h1>
+  </div>
+</header>
+
+<main>
+  <section id="card" class="card" aria-live="polite"></section>
+</main>
+
+<footer>
+  Quick decision aid based on Regulations 39–51 supplied for this tool. It does not replace the regulations or a formal Programme Assessment Board decision. Part-time students have additional requirements under Reg. 47.
+</footer>
+
+<script>
+const passages = {"Start": {"title": "Abertay Student Progression Navigator", "body": "\n<p>Use this as a quick decision aid for undergraduate progression through Stages 1–4 under Regulations 39–51.</p>\n<p><strong>First question:</strong> has the student received <strong>NS in all modules in the term</strong>?</p>\n", "choices": [["Yes — normally withdraw", "NSWithdraw"], ["No — continue", "ModuleHistory"]]}, "NSWithdraw": {"title": "Normally required to withdraw", "body": "\n<p>Students with NS in all modules in a term will normally be required to withdraw. <strong>Reg. 39.</strong></p>\n<p>The Programme Assessment Board (PAB) makes the formal progression decision. The student has a right of appeal under the Academic Appeals Procedure. <strong>Reg. 40.</strong></p>\n", "outcome": "withdraw"}, "ModuleHistory": {"title": "Check module history", "body": "\n<p>Is any currently failed or outstanding module — or its agreed substitute — being taken in the student's <strong>second academic session</strong>?</p>\n<p>In other words: has the student already failed this module in a previous academic year and is now repeating it?</p>\n", "choices": [["Yes — a module is being repeated", "RepeatedModule"], ["No — current failures are first-session failures", "CreditCount"]]}, "RepeatedModule": {"title": "Repeated module: final academic session", "body": "\n<p>A repeated module (or agreed substitute) is being taken in the student's <strong>second and final permitted academic session</strong>. <strong>Regs. 48 & 51.</strong></p>\n<p>Under the normal assessment pattern, this means up to four assessment opportunities overall: main assessment + resit in the first session, then main assessment + resit in the repeat session.</p>\n<p><strong>The repeated module must be passed for the student to progress.</strong></p>\n<p>What is its current status?</p>\n", "choices": [["Passed — continue to credit calculation", "CreditCount"], ["Main repeat assessment failed, but final resit remains", "FinalAttemptPending"], ["Final permitted attempt failed", "FinalAttemptFailed"]]}, "FinalAttemptPending": {"title": "Progression pending final attempt", "body": "\n<p>The student has not yet passed the repeated module, so progression cannot currently be confirmed.</p>\n<p>If eligible, the remaining resit is the <strong>final permitted attempt</strong>. The module must be passed on that attempt. <strong>Regs. 48 & 51.</strong></p>\n", "choices": [["Final attempt passed", "CreditCount"], ["Final attempt failed", "FinalAttemptFailed"]]}, "FinalAttemptFailed": {"title": "Cannot progress", "body": "\n<p>The student has failed a repeated module (or agreed substitute) on the final permitted attempt.</p>\n<p>The module must be passed for progression and cannot be taken in a third academic session. The student will therefore normally be required to withdraw, subject to the formal PAB decision and any applicable appeal. <strong>Regs. 48, 49 & 51.</strong></p>\n", "outcome": "withdraw"}, "CreditCount": {"title": "How many stage credits have been passed?", "body": "\n<p>Use the student's current passed-credit total before any new condonement decision.</p>\n", "choices": [["120 credits", "FullPass"], ["95–119 credits", "Carry"], ["60–94 credits", "Sixty"], ["Fewer than 60 credits", "Under60"]]}, "FullPass": {"title": "120 credits passed", "body": "\n<p>The standard undergraduate stage requirement has been met: <strong>120 credits with passing grades</strong>.</p>\n<p>The student is eligible to proceed to the next stage. <strong>Reg. 41.</strong></p>\n", "outcome": "proceed"}, "Carry": {"title": "95–119 credits passed", "body": "\n<p>The student may normally proceed to the next stage while carrying the failed module(s), or agreed substitutes, into the next academic year. <strong>Reg. 44.</strong></p>\n<p>However, this does <strong>not</strong> apply where the failed module is a prerequisite that must be passed before progression.</p>\n<p>Is any failed module such a prerequisite?</p>\n", "choices": [["Yes — prerequisite must be passed", "RepeatStudy"], ["No — proceed with carried module(s)", "ProceedCarry"]]}, "ProceedCarry": {"title": "Proceed with carried module(s)", "body": "\n<p>The student may proceed while taking the failed module(s), or agreed substitutes, in the following academic year. <strong>Reg. 44.</strong></p>\n<p>That carried module is now entering its second academic session. It must be passed within that session; there is no third academic session for the same module or an agreed substitute. <strong>Regs. 48 & 51.</strong></p>\n", "outcome": "proceed"}, "Sixty": {"title": "60–94 credits passed", "body": "\n<p>The student will normally be required, if eligible, to undertake <strong>repeat study</strong> in the following academic year. <strong>Reg. 45.</strong></p>\n<p>Before settling that outcome, could condonement change the student's credit position?</p>\n", "choices": [["Check condonement", "Condone"], ["Condonement clearly cannot apply", "RepeatStudy"]]}, "Under60": {"title": "Fewer than 60 credits passed", "body": "\n<p>The student will normally be required to withdraw from study. <strong>Reg. 46.</strong></p>\n<p>The PAB makes the formal decision and appeal rights remain available. <strong>Reg. 40.</strong></p>\n", "outcome": "withdraw"}, "Condone": {"title": "Could condonement apply?", "body": "\n<p>At the <strong>end-of-year PAB only</strong>, the PAB may condone <strong>one module of up to 20 credits</strong> with an overall grade of <strong>MF</strong>, provided the student has <strong>no more than 40 credits outstanding</strong>. <strong>Reg. 42.</strong></p>\n<p>Condonement cannot apply where the module is:</p>\n<ul>\n<li>a Core Prerequisite;</li>\n<li>integral to achieving the stage learning outcomes; or</li>\n<li>required for PSRB validation.</li>\n</ul>\n<p>Condonement is discretionary, not automatic.</p>\n<p>Does the module satisfy the conditions for possible condonement?</p>\n", "choices": [["Yes — PAB condones it", "Recalculate"], ["No — condonement unavailable", "RepeatStudy"], ["This is a study-abroad marginal fail", "StudyAbroad"]]}, "StudyAbroad": {"title": "Study-abroad condonement", "body": "\n<p>The PAB may condone the equivalent of up to <strong>20 SCQF credits</strong> of marginally failed modules taken during study abroad, where no condonement is applied to Abertay modules. <strong>Reg. 43.</strong></p>\n", "choices": [["Recalculate credits after condonement", "Recalculate"]]}, "Recalculate": {"title": "Recalculate after condonement", "body": "\n<p>Using the revised position after any PAB-approved condonement, how many stage credits are now treated as complete?</p>\n", "choices": [["120 credits", "FullPass"], ["95–119 credits", "Carry"], ["60–94 credits", "RepeatStudy"], ["Fewer than 60 credits", "Under60"]]}, "RepeatStudy": {"title": "Repeat study required", "body": "\n<p>Where repeat study is permitted, the student must participate fully and complete all assessments. Previous attempts are not carried forward. A grade achieved at the first assessment diet of the repeat year is not capped. <strong>Reg. 48.</strong></p>\n<p>The repeated module(s) must be passed for progression. Now check whether the student is still eligible to repeat.</p>\n", "choices": [["Check repeat limits", "StageRepeat"]]}, "StageRepeat": {"title": "Has this stage already been repeated?", "body": "\n<p>A student may repeat a stage <strong>once only</strong>. To progress after a repeated stage, the stage requirements must be passed in full. <strong>Reg. 49.</strong></p>\n", "choices": [["Yes — this stage has already been repeated", "RepeatExhausted"], ["No — this would be the first repeat of this stage", "TotalStageRepeats"]]}, "TotalStageRepeats": {"title": "How many other stages have been repeated?", "body": "\n<p>No student may repeat more than <strong>two stages of study</strong>. <strong>Reg. 50.</strong></p>\n", "choices": [["Two stages have already been repeated", "RepeatExhausted"], ["Fewer than two stages have been repeated", "ModuleSessionLimit"]]}, "ModuleSessionLimit": {"title": "Check the module's academic-session limit", "body": "\n<p>A student may not take the same module — or a module and agreed substitute — in more than <strong>two academic sessions</strong>. <strong>Reg. 51.</strong></p>\n<p>Has this module/substitute already been taken in two academic sessions?</p>\n", "choices": [["Yes — two sessions already used and module still failed", "FinalAttemptFailed"], ["No — only one session used so far", "RepeatAllowed"]]}, "RepeatAllowed": {"title": "Repeat study permitted", "body": "\n<p>The student may repeat the relevant module(s) in the following academic year, subject to the PAB decision and other programme requirements.</p>\n<p>This is the module's <strong>second and final academic session</strong>. It must be passed in that session. <strong>Regs. 48 & 51.</strong></p>\n", "outcome": "repeat"}, "RepeatExhausted": {"title": "No further repeat available", "body": "\n<p>The applicable stage-repeat limit has been reached. If the student cannot now meet the stage requirements, they will normally be required to withdraw. <strong>Regs. 49 & 50.</strong></p>\n", "outcome": "withdraw"}};
+let current = "Start";
+let historyStack = [];
+
+function outcomeLabel(type) {
+  const labels = {
+    proceed: "OUTCOME: PROCEED",
+    repeat: "OUTCOME: REPEAT STUDY",
+    withdraw: "OUTCOME: NORMALLY WITHDRAW"
+  };
+  return labels[type] || "";
+}
+
+function render(name, addHistory = true) {
+  if (!passages[name]) return;
+  if (addHistory && current && current !== name) historyStack.push(current);
+  current = name;
+  const p = passages[name];
+  const card = document.getElementById("card");
+
+  let choices = "";
+  if (p.choices) {
+    choices = p.choices.map(([label,target]) =>
+      `<button class="choice" data-target="${target}">${label}</button>`
+    ).join("");
+  }
+
+  let outcome = "";
+  if (p.outcome) {
+    outcome = `<div class="outcome ${p.outcome}">${outcomeLabel(p.outcome)}</div>`;
+  }
+
+  card.innerHTML = `
+    <div class="eyebrow">Regulations 39–51</div>
+    <h2>${p.title}</h2>
+    ${p.body}
+    ${outcome}
+    ${choices}
+    <div class="toolbar">
+      ${historyStack.length ? '<button class="tool" id="back">← Back</button>' : ''}
+      <button class="tool" id="restart">Restart</button>
+    </div>
+    <div class="reminder"><strong>PAB reminder:</strong> Condonement and progression decisions are not automatic. The Programme Assessment Board makes the formal decision.</div>
+  `;
+
+  card.querySelectorAll("[data-target]").forEach(btn => {
+    btn.addEventListener("click", () => render(btn.dataset.target, true));
+  });
+
+  const back = document.getElementById("back");
+  if (back) {
+    back.addEventListener("click", () => {
+      const previous = historyStack.pop();
+      render(previous, false);
+    });
+  }
+
+  document.getElementById("restart").addEventListener("click", () => {
+    historyStack = [];
+    current = "Start";
+    render("Start", false);
+  });
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+render("Start", false);
+</script>
+</body>
+</html>
